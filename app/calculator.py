@@ -7,6 +7,8 @@ from app.logger import Logger
 from app.calculator_config import CalculatorConfig
 from app.exceptions import CalculatorError
 from app.logger import LoggingObserver
+from app.history import AutoSaveObserver
+
 
 
 class Calculator:
@@ -18,6 +20,7 @@ class Calculator:
         self.config = CalculatorConfig()
         self.history_manager = HistoryManager(self.config.max_history_size)
         self.history_manager.add_observer(LoggingObserver())
+        self.history_manager.add_observer(AutoSaveObserver(self.history_manager))
         self.caretaker = Caretaker()
         self.validator = InputValidator()
         self.logger = Logger.get_logger()
