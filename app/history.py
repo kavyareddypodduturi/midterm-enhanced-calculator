@@ -35,3 +35,37 @@ class HistoryManager:
         if not self.history:
             raise HistoryError("No history available.")
         return self.history[-1]
+    
+import pandas as pd
+from app.calculator_config import CalculatorConfig
+from app.exceptions import FileOperationError
+
+
+class AutoSaveObserver:
+    """
+    Observer that automatically saves calculation history to CSV.
+    """
+
+    def __init__(self, history_manager):
+        self.history_manager = history_manager
+        self.config = CalculatorConfig()
+
+    def update(self, calculation):
+        if not self.config.auto_save:
+            return
+
+        try:
+            data = [
+                calc.to_dict() for calc in self.history_manager.get_all()
+            ]
+
+            df = pd.DataFrame(data)
+
+            df.to_csv(
+                self.config.history_file,
+                index=False,
+                encoding=self.config.default_encoding,
+            )
+
+        except Exception as e:
+            raise FileOperationError(f"Failed to auto-save history: {e}")    
