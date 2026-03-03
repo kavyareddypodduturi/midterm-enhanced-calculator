@@ -6,6 +6,7 @@ from app.input_validators import InputValidator
 from app.logger import Logger
 from app.calculator_config import CalculatorConfig
 from app.exceptions import CalculatorError
+from app.logger import LoggingObserver
 
 
 class Calculator:
@@ -16,6 +17,7 @@ class Calculator:
     def __init__(self):
         self.config = CalculatorConfig()
         self.history_manager = HistoryManager(self.config.max_history_size)
+        self.history_manager.add_observer(LoggingObserver())
         self.caretaker = Caretaker()
         self.validator = InputValidator()
         self.logger = Logger.get_logger()
