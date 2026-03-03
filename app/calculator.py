@@ -63,3 +63,63 @@ class Calculator:
         state = self.caretaker.redo()
         self.history_manager.history = state
         self.logger.info("Redo performed.")
+
+if __name__ == "__main__":  # pragma: no cover
+    calculator = Calculator()
+
+    print("Enhanced Calculator (type 'help' for commands, 'exit' to quit)")
+
+    while True:
+        user_input = input(">> ").strip()
+
+        if user_input.lower() == "exit":
+            print("Exiting calculator.")
+            break
+
+        if user_input.lower() == "help":
+            print("Available commands:")
+            print("add, subtract, multiply, divide, power, root, modulus, int_divide, percent, abs_diff")
+            print("history, clear, undo, redo, exit")
+            continue
+
+        if user_input.lower() == "history":
+            for item in calculator.get_history():
+                print(
+                    f"{item.operation} | {item.operand1}, {item.operand2} -> {item.result}"
+                )
+            continue
+
+        if user_input.lower() == "clear":
+            calculator.clear_history()
+            print("History cleared.")
+            continue
+
+        if user_input.lower() == "undo":
+            try:
+                calculator.undo()
+                print("Undo successful.")
+            except Exception as e:
+                print(e)
+            continue
+
+        if user_input.lower() == "redo":
+            try:
+                calculator.redo()
+                print("Redo successful.")
+            except Exception as e:
+                print(e)
+            continue
+
+        parts = user_input.split()
+
+        if len(parts) == 3:
+            operation_name, value1, value2 = parts
+            try:
+                result = calculator.perform_operation(
+                    operation_name, value1, value2
+                )
+                print(f"Result: {result}")
+            except Exception as e:
+                print(e)
+        else:
+            print("Invalid command format. Use: operation value1 value2")        
