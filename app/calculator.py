@@ -33,9 +33,10 @@ class Calculator:
             calculation = Calculation(operation_name, a, b, result)
 
             # Save current state for undo
-            self.caretaker.save(self.history_manager.get_all())
-
             self.history_manager.add(calculation)
+
+            # Save new state after adding calculation
+            self.caretaker.save(self.history_manager.get_all())
 
             self.logger.info(
                 f"{operation_name} | {a}, {b} -> {result}"
