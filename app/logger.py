@@ -31,3 +31,18 @@ class Logger:
             cls._logger = logger
 
         return cls._logger
+    
+class LoggingObserver:
+    """
+    Observer that logs each new calculation.
+    """
+
+    def __init__(self):
+        self.logger = Logger.get_logger()
+
+    def update(self, calculation):
+        self.logger.info(
+            f"New Calculation Logged | "
+            f"{calculation.operation} | "
+            f"{calculation.operand1}, {calculation.operand2} -> {calculation.result}"
+        )    
