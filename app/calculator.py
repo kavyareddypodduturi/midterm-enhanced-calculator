@@ -8,6 +8,8 @@ from app.calculator_config import CalculatorConfig
 from app.exceptions import CalculatorError
 from app.logger import LoggingObserver
 from app.history import AutoSaveObserver
+import pandas as pd
+from app.exceptions import FileOperationError
 
 
 
@@ -70,6 +72,45 @@ class Calculator:
         self.history_manager.history = state
         self.logger.info("Redo performed.")
 
+    def save_history(self):
+        try:
+            data = [calc.to_dict() for calc in self.history_manager.get_all()]
+            df = pd.DataFrame(data)
+            df.to_csv(
+                self.config.history_file,
+                index=False,
+                encoding=self.config.default_encoding,
+            )
+            self.logger.info("History manually saved.")
+        except Exception as e:
+            raise FileOperationError(f"Failed to save history: {e}")
+
+    def load_history(self):
+        try:
+            df = pd.read_csv(
+                self.config.history_file,
+                encoding=self.config.default_encoding,
+            )
+
+            self.history_manager.clear()
+
+            for _, row in df.iterrows():
+                calculation = Calculation(
+                    row["operation"],
+                    float(row["operand1"]),
+                    float(row["operand2"]),
+                    float(row["result"]),
+                )
+                self.history_manager.add(calculation)
+
+            self.logger.info("History loaded from file.")
+
+        except FileNotFoundError:
+            raise FileOperationError("History file not found.")
+        except Exception as e:
+            raise FileOperationError(f"Failed to load history: {e}")
+        
+
 if __name__ == "__main__":  # pragma: no cover
     calculator = Calculator()
 
@@ -112,6 +153,22 @@ if __name__ == "__main__":  # pragma: no cover
             try:
                 calculator.redo()
                 print("Redo successful.")
+            except Exception as e:
+                print(e)
+            continue
+
+        if user_input.lower() == "save":
+            try:
+                calculator.save_history()
+                print("History saved manually.")
+            except Exception as e:
+                print(e)
+            continue
+
+        if user_input.lower() == "load":
+            try:
+                calculator.load_history()
+                print("History loaded from file.")
             except Exception as e:
                 print(e)
             continue
