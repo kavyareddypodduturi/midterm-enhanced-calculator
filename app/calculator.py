@@ -10,6 +10,8 @@ from app.logger import LoggingObserver
 from app.history import AutoSaveObserver
 import pandas as pd
 from app.exceptions import FileOperationError
+from colorama import init, Fore, Style
+init(autoreset=True)
 
 
 
@@ -114,17 +116,17 @@ class Calculator:
 if __name__ == "__main__":  # pragma: no cover
     calculator = Calculator()
 
-    print("Enhanced Calculator (type 'help' for commands, 'exit' to quit)")
+    print(Fore.CYAN + "Enhanced Calculator (type 'help' for commands, 'exit' to quit)")
 
     while True:
         user_input = input(">> ").strip()
 
         if user_input.lower() == "exit":
-            print("Exiting calculator.")
+            print(Fore.CYAN + "Exiting calculator.")
             break
 
         if user_input.lower() == "help":
-            print("Available commands:")
+            print(Fore.CYAN + "Available commands:")
             print("add, subtract, multiply, divide, power, root, modulus, int_divide, percent, abs_diff")
             print("history, clear, undo, redo, exit")
             continue
@@ -138,39 +140,39 @@ if __name__ == "__main__":  # pragma: no cover
 
         if user_input.lower() == "clear":
             calculator.clear_history()
-            print("History cleared.")
+            print(Fore.YELLOW + "History cleared.")
             continue
 
         if user_input.lower() == "undo":
             try:
                 calculator.undo()
-                print("Undo successful.")
+                print(Fore.YELLOW + "Undo successful.")
             except Exception as e:
-                print(e)
+                print(Fore.RED + str(e))
             continue
 
         if user_input.lower() == "redo":
             try:
                 calculator.redo()
-                print("Redo successful.")
+                print(Fore.YELLOW + "Redo successful.")
             except Exception as e:
-                print(e)
+                print(Fore.RED + str(e))
             continue
 
         if user_input.lower() == "save":
             try:
                 calculator.save_history()
-                print("History saved manually.")
+                print(Fore.YELLOW + "History saved manually.")
             except Exception as e:
-                print(e)
+                print(Fore.RED + str(e))
             continue
 
         if user_input.lower() == "load":
             try:
                 calculator.load_history()
-                print("History loaded from file.")
+                print(Fore.YELLOW + "History loaded from file.")
             except Exception as e:
-                print(e)
+                print(Fore.RED + str(e))
             continue
 
         parts = user_input.split()
@@ -181,8 +183,8 @@ if __name__ == "__main__":  # pragma: no cover
                 result = calculator.perform_operation(
                     operation_name, value1, value2
                 )
-                print(f"Result: {result}")
+                print(Fore.GREEN + f"Result: {result}")
             except Exception as e:
-                print(e)
+                print(Fore.RED + str(e))
         else:
-            print("Invalid command format. Use: operation value1 value2")        
+            print(Fore.RED + "Invalid command format. Use: operation value1 value2")        
